@@ -39,7 +39,7 @@ async function checkPage() {
     console.log('El texto "SOLO ARGENTINA" ha sido encontrado en la página.');
 
     // Enviar notificación al canal con el mensaje y el enlace de la página
-    const message = `Mensaje del bot ${bot.bot_username}:\n\nHay turnos para Argentina en ${url}`;
+    const message = `Hay turnos para Argentina en ${url}`;
     await bot.sendMessage(CHANNEL_NAME, message);
 
     await browser.close();
@@ -47,7 +47,7 @@ async function checkPage() {
     console.error("No hay turnos:", error);
 
     // Enviar notificación al canal si no hay turnos
-    const message = `Mensaje del bot ${bot.bot_username}:\n\nNo hay turnos`;
+    const message = `No hay turnos`;
     await bot.sendMessage(CHANNEL_NAME, message);
   }
 }

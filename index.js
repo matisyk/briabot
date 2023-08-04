@@ -6,9 +6,9 @@ const TELEGRAM_BOT_TOKEN = "6026938604:AAER13zEIn9cVmAfZNekNMt74L7xats2Zdg";
 
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
 
-const CHANNEL_NAME = '@turnosbria'; // Nombre del canal público al que se reenviarán los mensajes
+const CHANNEL_NAME = "@turnosbria"; // Nombre del canal público al que se reenviarán los mensajes
 
-bot.on('message', async (msg) => {
+bot.on("message", async (msg) => {
   const chatId = msg.chat.id;
 
   // Reenviar el mensaje al canal
@@ -17,53 +17,37 @@ bot.on('message', async (msg) => {
     await bot.sendMessage(CHANNEL_NAME, messageText);
     console.log(`Mensaje reenviado al canal desde el chat ${chatId}`);
   } catch (error) {
-    console.error('Error al reenviar el mensaje:', error);
+    console.error("Error al reenviar el mensaje:", error);
   }
 });
 
 async function checkPage() {
-  const url = 'https://entrevistasjavaia2024.setmore.com/bookclass';
-  const textToFind = 'SOLO ARGENTINA';
-  const attributeToAvoid = 'data-testid="1692624600000"';
+  const url = "https://entrevistasjavaia2024.setmore.com/bookclass";
+  const textToFind = "SOLO ARGENTINA";
 
   try {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
-    await page.goto(url, { waitUntil: 'domcontentloaded' });
+    await page.goto(url, { waitUntil: "domcontentloaded" });
 
-    // Comprobar si el h5 que contiene el texto "SOLO ARGENTINA" está presente
-    const elementsWithTextToFind = await page.evaluate((text) => {
-      return Array.from(document.querySelectorAll('h5')).filter((element) =>
-        element.innerText.includes(text)
-      );
-    }, textToFind);
+    // Esperar a que el h5 que contiene el texto aparezca en la página
+    await page.waitForXPath(`//h5[contains(text(), "${textToFind}")]`, {
+      timeout: 10000, // Aumenta este tiempo si la página carga lentamente
+    });
 
-    // Comprobar si el atributo "data-testid" está presente en la página
-    const hasAttributeToAvoid = await page.evaluate((attribute) => {
-      return Array.from(document.querySelectorAll(`[${attribute}]`)).length > 0;
-    }, attributeToAvoid);
+    console.log('El texto "SOLO ARGENTINA" ha sido encontrado en la página.');
 
-    if (elementsWithTextToFind.length > 0 && !hasAttributeToAvoid) {
-      console.log('El texto "SOLO ARGENTINA" ha sido encontrado en la página y no se encontró el atributo.');
-
-      // Enviar notificación al canal con el mensaje y el enlace de la página
-      const message = `Hay turnos para Argentina en ${url}`;
-      await bot.sendMessage(CHANNEL_NAME, message);
-    } else {
-      console.log('No hay turnos o se encontró el atributo.');
-
-      // Enviar notificación al canal si no hay turnos o se encontró el atributo
-      const message = `No hay turnos`;
-      await bot.sendMessage(CHANNEL_NAME, message);
-    }
+    // Enviar notificación al canal con el mensaje y el enlace de la página
+    const message = `Mensaje del bot ${bot.bot_username}:\n\nHay turnos para Argentina en ${url}`;
+    await bot.sendMessage(CHANNEL_NAME, message);
 
     await browser.close();
   } catch (error) {
-    console.error('Error al buscar turnos:', error);
+    console.error("No hay turnos:", error);
 
-    // Enviar notificación al canal en caso de error
-    const message = `Mensaje del bot ${bot.bot_username}:\n\nError al buscar turnos`;
+    // Enviar notificación al canal si no hay turnos
+    const message = `Mensaje del bot ${bot.bot_username}:\n\nNo hay turnos`;
     await bot.sendMessage(CHANNEL_NAME, message);
   }
 }
@@ -71,5 +55,5 @@ async function checkPage() {
 // Llamar a la función de búsqueda al iniciar el bot
 checkPage();
 
-// Llamar a la función cada 30 minutos (1800000 ms)
-setInterval(checkPage, 1800000);
+// Llamar a la función cada 25 minutos (1600000 ms)
+setInterval(checkPage, 1500000);

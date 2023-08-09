@@ -1,12 +1,13 @@
 const puppeteer = require("puppeteer");
-const axios = require("axios");
 const TelegramBot = require("node-telegram-bot-api");
+const dotenv = require("dotenv");
+dotenv.config();
 
-const TELEGRAM_BOT_TOKEN = "6026938604:AAER13zEIn9cVmAfZNekNMt74L7xats2Zdg";
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_API_TOKEN;
 
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
 
-const CHANNEL_NAME = "@turnosbria"; // Nombre del canal público al que se reenviarán los mensajes
+const CHANNEL_NAME = process.env.TELEGRAM_CHANNEL_NAME; // Nombre del canal público al que se reenviarán los mensajes
 
 bot.on("message", async (msg) => {
   const chatId = msg.chat.id;

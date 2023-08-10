@@ -2,6 +2,19 @@ const puppeteer = require("puppeteer");
 const TelegramBot = require("node-telegram-bot-api");
 const dotenv = require("dotenv");
 dotenv.config();
+const cool = require('cool-ascii-faces')
+const express = require('express')
+const path = require('path')
+
+const PORT = process.env.PORT || 5001
+
+express()
+  .use(express.static(path.join(__dirname, 'public')))
+  .set('views', path.join(__dirname, 'views'))
+  .set('view engine', 'ejs')
+  .get('/', (req, res) => res.render('pages/index'))
+  .get('/cool', (req, res) => res.send(cool()))
+  .listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_API_TOKEN;
 

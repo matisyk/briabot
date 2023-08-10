@@ -24,7 +24,7 @@ bot.on("message", async (msg) => {
 
 async function checkPage() {
   const url = "https://entrevistasjavaia2024.setmore.com/bookclass";
-  const textToFind = "ARGENTINA";
+  const textToFind = "SOLO ARGENTINA";
 
   try {
     const browser = await puppeteer.launch();
